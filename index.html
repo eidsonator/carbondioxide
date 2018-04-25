@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <!-- All of the Node.js APIs are available in this renderer process. -->
+    We are using Node.js <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.
+
+    <script>
+      // You can also require other files to run in this process
+      require('./renderer.js')
+      fs = require('fs');
+      fs.readFile('4.21.18 test.txt', 'ascii', function(err, data) {
+        lines = data.split(/\r?\n/);
+        mapped = lines.reduce(function(result, line){
+          if(!line.includes("System")) {
+            obj = line.split( /\s+/);
+            obj[1] = Number(obj[1]);
+            obj[2] = Number(obj[2]);
+            obj[3] = Number(obj[3]);
+            obj[4] = Number(obj[4]);
+            result.push(obj);
+          }          
+          return result;
+        }, []);
+        console.log(mapped);
+      });
+    </script>
+  </body>
+</html>
