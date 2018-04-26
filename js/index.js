@@ -2,6 +2,11 @@ const fs = require('fs');
 const chokidar = require('chokidar');
 const readLastLines = require('read-last-lines');
 const watcher = chokidar.watch('test.txt');
+const jquery = require('jquery');
+const popper = require('popper.js');
+const bootsrap = require('bootstrap');
+
+
 
 let ambientPressure = null;
 let pressureDrop = false;
