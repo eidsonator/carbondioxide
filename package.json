@@ -20,8 +20,9 @@
     "electron": "^1.8.4"
   },
   "dependencies": {
+    "bootstrap": "^4.1.0",
     "chokidar": "^2.0.3",
     "read-last-lines": "^1.4.0",
-    "tail": "^1.2.3"
+    "vue": "^2.5.16"
   }
 }
