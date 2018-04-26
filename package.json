@@ -23,6 +23,7 @@
     "bootstrap": "^4.1.0",
     "chart.js": "^2.7.2",
     "chokidar": "^2.0.3",
+    "moment": "^2.22.1",
     "read-last-lines": "^1.4.0",
     "vue": "^2.5.16"
   }
