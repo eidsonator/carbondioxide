@@ -89,5 +89,29 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "build": {
+    "appId": "greenskies.co2_analyzer",
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://github.com/eidsonator/carbondioxide"
+      }
+    ],
+    "linux": {
+      "target": "rpm",
+      "category": "Network"
+    },
+    "rpm": {
+      "icon": "./build/icon.ico"
+    },
+    "win": {
+      "target": "nsis",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true
+    }
+  },
 }
