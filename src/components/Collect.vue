@@ -15,6 +15,12 @@
     :width="400"
     :height="200"></co2-chart>
 
+    <table class="table">
+      <tr v-for="sample in samples">
+        <td>{{ sample.number }}</td>
+        <td>{{ sample.CO2 }}</td>
+      </tr>
+    </table>
 
     <router-link :to="'Config'">Config</router-link>
   </div>
@@ -34,6 +40,7 @@ export default {
     return {
       message: "Waiting for",
       sampleNumber: 1,
+      samples: [],
       records: [],
       ambientPressure: 0,
       pressureDropFound: false,
@@ -71,6 +78,11 @@ export default {
         Flow_Rate: Number(obj[5])
       };
       return val;
+    },
+    saveSample: function() {
+      let sample = this.currentRead;
+      sample.number = this.sampleNumber;
+      this.samples.push(sample);
     }
   },
   created() {
@@ -120,6 +132,7 @@ export default {
             //we have a peak, waiting for sample
             this.ticks++;
             if (this.ticks == 10) {
+              this.saveSample();
               this.sampleFound = true;
               this.message = "Completed";
             }
