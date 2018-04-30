@@ -23,6 +23,7 @@
     </table>
 
     <router-link :to="'Config'">Config</router-link>
+    <router-link :to="'Tests'">Test</router-link>
   </div>
 </template>
 
