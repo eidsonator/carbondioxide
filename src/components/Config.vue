@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    {{ filepath }}
+    {{ filepath }}<br>
     <input id="file" type="file" @change="save()">
     <br>
 
@@ -15,7 +15,7 @@ export default {
   name: "Config",
   data() {
     return {
-      filepath: null
+      filepath: settings.get('filepath')
     };
   },
   methods: {
