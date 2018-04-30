@@ -1,14 +1,20 @@
+const path = require('path');
 const fs = require('fs');
-fs.truncateSync('test.txt');
+testFile = __dirname + path.sep + 'test.txt';
+
+fs.truncateSync(testFile);
 const endOfLine = require('os').EOL;
 
-fs.readFile('4oz.txt', 'ascii', function(err, data) {
+console.log(process.argv[2]);
+fs.readFile(process.argv[2], 'ascii', function(err, data) {
     let lines = data.split(/\r?\n/);
     let numberOfLines = lines.length;
     let count = 0;
+
+    console.log(__dirname);
     interval = setInterval(function(){
         let data = lines[count++] + lines[count++] + endOfLine + endOfLine;
-        fs.appendFileSync('test.txt', data);
+        fs.appendFileSync(testFile, data);
         if (count >= numberOfLines - 2) {
             clearInterval(interval);
         }
