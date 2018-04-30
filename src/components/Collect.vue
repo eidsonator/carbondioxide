@@ -11,7 +11,13 @@
 
     <co2-chart
     :data="co2ChartData" ref='co2Chart'
-    :options="{responsive: false, maintainAspectRatio: false}"
+    :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
+    :width="400"
+    :height="200"></co2-chart>
+
+    <co2-chart
+    :data="pressureChartData" ref='pressureChart'
+    :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
     :width="400"
     :height="200"></co2-chart>
 
@@ -63,6 +69,16 @@ export default {
             data: []
           }
         ]
+      },
+      pressureChartData: {
+        labels: [],
+        datasets: [
+          {
+            label: 'pressure',
+            backgroundColor: '#0079f8',
+            data: []
+          }
+        ]
       }
     };
   },
@@ -84,6 +100,15 @@ export default {
       let sample = this.currentRead;
       sample.number = this.sampleNumber;
       this.samples.push(sample);
+    },
+    updateCharts: function() {
+      this.co2ChartData.labels.push(this.currentRead.System_Time);
+      this.co2ChartData.datasets[0].data.push(this.currentRead.CO2);
+      this.$refs.co2Chart.update();
+
+      this.pressureChartData.labels.push(this.currentRead.System_Time);
+      this.pressureChartData.datasets[0].data.push(this.currentRead.CellPressure);
+      this.$refs.pressureChart.update();
     }
   },
   created() {
@@ -101,12 +126,8 @@ export default {
         if(isNaN(this.currentRead.CO2)) {
           return;
         }
-        this.co2ChartData.labels.push(this.currentRead.System_Time);
-        this.co2ChartData.datasets[0].data.push(this.currentRead.CO2);
-        this.$refs.co2Chart.update();
-        console.log(this.chartData);
-        //this.chartData.push(this.currentRead.CO2);
-        // data.push(this.currentRead);
+        this.updateCharts();
+
         if (!this.ambientPressure) {
           this.ambientPressure = this.currentRead.CellPressure;
           this.CO2Baseline = this.currentRead.CO2 * 1.1;
