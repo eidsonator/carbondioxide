@@ -5,7 +5,10 @@ export default {
   extends: Line,
   props: ['data', 'options'],
   mounted () {
-    this.renderChart(this.data, this.options)
+    let options = [];
+    options['fill'] = false; options['pointRadius'] = 0;
+    options = options.concat(this.options);
+    this.renderChart(this.data, options)
   },
   methods: {
     update() {
