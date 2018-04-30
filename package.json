@@ -18,6 +18,7 @@
     "chart.js": "^2.7.2",
     "chokidar": "^2.0.3",
     "electron": "^1.8.5",
+    "electron-builder": "^20.10.0",
     "electron-json-storage": "^4.1.0",
     "electron-settings": "^3.1.4",
     "fs": "^0.0.1-security",
@@ -113,5 +114,5 @@
       "oneClick": false,
       "perMachine": true
     }
-  },
+  }
 }
