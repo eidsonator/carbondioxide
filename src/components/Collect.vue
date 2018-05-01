@@ -36,8 +36,7 @@
 <script>
 
 import Co2Chart from './Co2Chart';
-const settings = window.require('electron-settings');
-
+const settings = window.require('electron').remote.require('electron-settings');
 export default {
   name: "Collect",
   components: {
@@ -52,7 +51,6 @@ export default {
       ambientPressure: 0,
       pressureDropFound: false,
       peakFound: false,
-      sampleNumber: 1,
       sampleFound: false,
       lastRead: {},
       currentRead: {},
@@ -114,13 +112,14 @@ export default {
   created() {
     const fs = window.require("fs");
     // import fs from 'fs'
-    const chokidar = window.require("chokidar");
-    const readLastLines = window.require("read-last-lines");
-    console.log("created");
+    const chokidar = window.require('electron').remote.require("chokidar");
+    const readLastLines = window.require('electron').remote.require("read-last-lines");
+    const os = window.require('os');
     const watcher = chokidar.watch(this.filepath);
+    const linesOffset = settings.get('linesOffset', 4);
     watcher.on("change", () => {
-      readLastLines.read(this.filepath, 2).then(lines => {
-        let line = lines.split(/\r?\n/)[0];
+      readLastLines.read(this.filepath, linesOffset).then(lines => {
+        let line = lines.trim();
         this.lastRead = this.currentRead;
         this.currentRead = this.createReadObject(line);
         if(isNaN(this.currentRead.CO2)) {
