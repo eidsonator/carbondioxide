@@ -1,30 +1,73 @@
 <template>
   <div>
     <h1>{{ message }} sample {{ sampleNumber }}</h1>
-    <table class="table">
-      <tr>
-        <td>C02</td><td>{{ currentRead.CO2 }}</td>
-      </tr>
-        <td>Pressure</td><td>{{ currentRead.CellPressure }}</td>
-    </table>
     Room Pressure: {{ ambientPressure }}
 
-    <co2-chart
-    :data="co2ChartData" ref='co2Chart'
-    :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
-    :width="400"
-    :height="200"></co2-chart>
+    <div class="columns">
+      <div class="column">
+        <div class="is-flex" style="justify-content: center">
+          <table class="table">
+            <tr>
+              <th>Date</th><td>{{ currentRead.System_Date }}</td>
+            </tr>
+            <tr>
+              <th>Time</th><td>{{ currentRead.System_Time }}</td>
+            </tr>
+            <tr>
+              <th>CO<sub>2</sub></th><td>{{ currentRead.CO2 }}</td>
+            </tr>
+            <tr>
+              <th>Cell Temp</th><td>{{ currentRead.Cell_Temperature }}</td>
+            </tr>
+            <tr>
+              <th>Pressure</th><td>{{ currentRead.Cell_Pressure }}</td>
+            </tr>
+            <tr>
+              <th>Flow Rate</th><td>{{ currentRead.Flow_Rate }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
 
-    <co2-chart
-    :data="pressureChartData" ref='pressureChart'
-    :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
-    :width="400"
-    :height="200"></co2-chart>
+      <div class="column">
+        <div class="is-flex" style="justify-content: center">
+          <co2-chart
+            :data="co2ChartData" ref='co2Chart'
+            :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
+            :width="400"
+            :height="200"></co2-chart>
+        </div>
+      </div>
+      <div class="column ">
+        <div class="is-flex" style="justify-content: center">
+          <co2-chart
+            :data="pressureChartData" ref='pressureChart'
+            :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
+            :width="400"
+            :height="200"></co2-chart>
+        </div>
+      </div>
+    </div>
 
+    <h2>Samples</h2>
     <table class="table">
+      <tr>
+        <th>Sample</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>CO<sub>2</sub></th>
+        <th>Cell Temp</th>
+        <th>Pressure</th>
+        <th>Flow Rate</th>
+      </tr>
       <tr v-for="sample in samples">
         <td>{{ sample.number }}</td>
+        <td>{{ sample.System_Date }}</td>
+        <td>{{ sample.System_Time }}</td>
         <td>{{ sample.CO2 }}</td>
+        <td>{{ sample.Cell_Temperature }}</td>
+        <td>{{ sample.CellPressure }}</td>
+        <td>{{ sample.Flow_Rate }}</td>
       </tr>
     </table>
 
