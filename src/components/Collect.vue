@@ -20,7 +20,7 @@
               <th>Cell Temp</th><td>{{ currentRead.Cell_Temperature }}</td>
             </tr>
             <tr>
-              <th>Pressure</th><td>{{ currentRead.Cell_Pressure }}</td>
+              <th>Pressure</th><td>{{ currentRead.CellPressure }}</td>
             </tr>
             <tr>
               <th>Flow Rate</th><td>{{ currentRead.Flow_Rate }}</td>
@@ -71,8 +71,8 @@
       </tr>
     </table>
 
-    <router-link :to="'Config'">Config</router-link>
-    <router-link :to="'Tests'">Test</router-link>
+    <button @click="clickConfig()">Config</button>
+    <button @click="clickTest()">Test</button>
   </div>
 </template>
 
@@ -143,6 +143,13 @@ export default {
       this.samples.push(sample);
     },
     updateCharts: function() {
+      if (this.co2ChartData.datasets[0].data.length > 60) {
+        this.co2ChartData.datasets[0].data.shift();
+        this.pressureChartData.datasets[0].data.shift();
+        this.co2ChartData.labels.shift();
+        this.pressureChartData.labels.shift();
+      }
+
       this.co2ChartData.labels.push(this.currentRead.System_Time);
       this.co2ChartData.datasets[0].data.push(this.currentRead.CO2);
       this.$refs.co2Chart.update();
@@ -150,6 +157,12 @@ export default {
       this.pressureChartData.labels.push(this.currentRead.System_Time);
       this.pressureChartData.datasets[0].data.push(this.currentRead.CellPressure);
       this.$refs.pressureChart.update();
+    },
+    clickConfig: function() {
+      this.$router.push({name: 'Config'});
+    },
+    clickTest: function() {
+      this.$router.push({name: 'Tests'});
     }
   },
   created() {

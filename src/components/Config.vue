@@ -1,14 +1,16 @@
 <template>
   <div>
-
+    <h3>Current Read File:</h3>
     {{ filepath }}<br>
+    <h3>Change Read File:</h3>
     <input id="file" type="file" @change="save()">
     <br>
-
+    <h3>Settings</h3>
     <label>Lines offset</label>
     <input v-model="linesOffset" @cange="saveOffset()">
     <br>
-    <router-link v-bind:to="'/'">Done</router-link>
+    <hr>
+    <button @click="clickDone">Done</button>
   </div>
 </template>
 
@@ -30,6 +32,9 @@ export default {
     },
     saveOffset: function() {
       settings.set('linesOffset', this.linesOffset);
+    },
+    clickDone: function() {
+      this.$router.push({name: 'Collect'});
     }
   },
   Created() {
