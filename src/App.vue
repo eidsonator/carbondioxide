@@ -5,9 +5,13 @@
 </template>
 
 <script>
+import SamplesStore from './stores/SamplesStore.js';
 
 export default {
-  name: 'App'
+  name: 'App',
+  created() {
+    SamplesStore.startPoller();
+  }
 }
 </script>
 
