@@ -177,6 +177,10 @@ export default {
       const seperator = path.sep;
       const endOfLine = window.require('electron').remote.require('os').EOL;
       let exportFile = settings.get('exportDirectory') + seperator + this.exportFileName;
+      if (fs.existsSync(exportFile)) {
+        fs.truncateSync(exportFile);
+      }
+
       let data = "date, time, sample, co2, temp, pressure, rate" + endOfLine;
       fs.appendFileSync(exportFile, data);
       this.samples.forEach(function(sample) {
