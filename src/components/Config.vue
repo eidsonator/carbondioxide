@@ -38,7 +38,7 @@ export default {
     setDirectory: function() {
       let exportDirectory = document.getElementById('exportDirectory').files[0].path;
       settings.set('exportDirectory', exportDirectory);
-      this.filepath = settings.get('exportDirectory')
+      this.exportDirectory = settings.get('exportDirectory')
     },
     saveOffset: function() {
       settings.set('linesOffset', this.linesOffset);
