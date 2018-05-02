@@ -71,6 +71,11 @@
       </tr>
     </table>
 
+    <label>Export File Name</label>
+    <input v-model="exportFileName">
+    <button @click="clickExport()">Export</button>
+    <br>
+
     <button @click="clickConfig()">Config</button>
     <button @click="clickTest()">Test</button>
   </div>
@@ -101,6 +106,7 @@ export default {
       ticks: 0,
       CO2Baseline: null,
       filepath: settings.get('filepath'),
+      exportFileName: null,
       co2ChartData: {
         labels: [],
         datasets: [
@@ -163,6 +169,22 @@ export default {
     },
     clickTest: function() {
       this.$router.push({name: 'Tests'});
+    },
+    clickExport: function() {
+      //todo ensure that filename is input
+      const path = window.require('electron').remote.require('path');
+      const fs = window.require('electron').remote.require('fs');
+      const seperator = path.sep;
+      const endOfLine = window.require('electron').remote.require('os').EOL;
+      let exportFile = settings.get('exportDirectory') + seperator + this.exportFileName;
+      let data = "date, time, sample, co2, temp, pressure, rate" + endOfLine;
+      fs.appendFileSync(exportFile, data);
+      this.samples.forEach(function(sample) {
+        data = `${sample.System_Date}, ${sample.System_Time}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.Flow_Rate}${endOfLine}`;
+        fs.appendFileSync(exportFile, data);
+      });
+      // to do exported notification!
+      window.alert('Exported to ' + exportFile);
     }
   },
   created() {
