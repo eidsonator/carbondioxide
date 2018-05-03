@@ -1,13 +1,39 @@
 <template>
   <div>
-    <h3>Current Read File:</h3>
-    {{ filepath }}<br>
-    <h3>Change Read File:</h3>
-    <input id="file" type="file" @change="save()">
-    <br>
-    <h3>Export Directory</h3>
-    {{ exportDirectory }}<br>
-    <input id="exportDirectory" type="file" webkitdirectory @change="setDirectory">
+    <h3>Settings</h3>
+    <div class="file has-name is-fullwidth">
+      <label class="file-label">
+        <input class="file-input" id="file" type="file" @change="save()">
+        <span class="file-cta">
+          <span class="file-icon">
+            <i class="fas fa-upload"></i>
+          </span>
+          <span class="file-label">
+            Read from file:
+          </span>
+        </span>
+        <span class="file-name">
+          {{ filepath }}
+        </span>
+      </label>
+    </div>
+
+    <div class="file has-name is-fullwidth">
+      <label class="file-label">
+        <input class="file-input" id="exportDirectory" type="file" webkitdirectory @change="setDirectory">
+        <span class="file-cta">
+          <span class="file-icon">
+            <i class="fas fa-upload"></i>
+          </span>
+          <span class="file-label">
+            Export directory:
+          </span>
+        </span>
+        <span class="file-name">
+          {{ exportDirectory }}
+        </span>
+      </label>
+    </div>
 
     <h3>Advanced Settings</h3>
     <label>Lines offset</label>
