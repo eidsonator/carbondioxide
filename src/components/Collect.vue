@@ -60,7 +60,7 @@
         <th>Pressure</th>
         <th>Flow Rate</th>
       </tr>
-      <tr v-for="sample in state.samples">
+      <tr v-for="sample in state.samples" v-bind:key="sample.number">
         <td>{{ sample.number }}</td>
         <td>{{ sample.System_Date }}</td>
         <td>{{ sample.System_Time }}</td>
