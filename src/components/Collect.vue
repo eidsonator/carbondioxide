@@ -61,13 +61,13 @@
         <th>Flow Rate</th>
       </tr>
       <tr v-for="sample in state.samples">
-        <td>{{ state.sample.number }}</td>
-        <td>{{ state.sample.System_Date }}</td>
-        <td>{{ state.sample.System_Time }}</td>
-        <td>{{ state.sample.CO2 }}</td>
-        <td>{{ state.sample.Cell_Temperature }}</td>
-        <td>{{ state.sample.CellPressure }}</td>
-        <td>{{ state.sample.Flow_Rate }}</td>
+        <td>{{ sample.number }}</td>
+        <td>{{ sample.System_Date }}</td>
+        <td>{{ sample.System_Time }}</td>
+        <td>{{ sample.CO2 }}</td>
+        <td>{{ sample.Cell_Temperature }}</td>
+        <td>{{ sample.CellPressure }}</td>
+        <td>{{ sample.Flow_Rate }}</td>
       </tr>
     </table>
 
@@ -86,6 +86,8 @@ import SamplesStore from '../stores/SamplesStore.js';
 import Co2Chart from './Co2Chart';
 
 const settings = window.require('electron').remote.require('electron-settings');
+
+
 export default {
   name: "Collect",
   components: {
@@ -94,14 +96,17 @@ export default {
   data() {
     return {
       state: SamplesStore.state,
+      pressureChartData: SamplesStore.state.pressureChartData.datasets[0].data,
+      exportFileName: null
     };
   },
-  methods: {
-    updateCharts: function() {
-      // todo call this in an $on
+  watch: {
+    pressureChartData: function() {
       this.$refs.co2Chart.update();
       this.$refs.pressureChart.update();
-    },
+    }
+  },
+  methods: {
     clickConfig: function() {
       this.$router.push({name: 'Config'});
     },
@@ -109,21 +114,7 @@ export default {
       this.$router.push({name: 'Tests'});
     },
     clickExport: function() {
-      //todo ensure that filename is input
-
-      let exportFile = settings.get('exportDirectory') + seperator + this.exportFileName;
-      if (fs.existsSync(exportFile)) {
-        fs.truncateSync(exportFile);
-      }
-
-      let data = "date, time, sample, co2, temp, pressure, rate" + endOfLine;
-      fs.appendFileSync(exportFile, data);
-      this.samples.forEach(function(sample) {
-        data = `${sample.System_Date}, ${sample.System_Time}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.Flow_Rate}${endOfLine}`;
-        fs.appendFileSync(exportFile, data);
-      });
-      // to do exported notification!
-      window.alert('Exported to ' + exportFile);
+      SamplesStore.writeFile(this.exportFileName);
     }
   }
 };
