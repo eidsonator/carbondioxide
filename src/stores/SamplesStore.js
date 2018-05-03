@@ -66,8 +66,6 @@ export default {
 
     this.state.pressureChartData.labels.push(this.state.currentRead.System_Time);
     this.state.pressureChartData.datasets[0].data.push(this.state.currentRead.CellPressure);
-
-    (new Vue()).$emit('update_charts');
   },
   writeFile(exportFileName) {
     //todo ensure that filename is input
