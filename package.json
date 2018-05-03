@@ -1,6 +1,6 @@
 {
   "name": "co2",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A Vue.js project",
   "author": "Todd Eidson <todd@eidson.info>",
   "private": true,
@@ -11,14 +11,14 @@
     "start": "npm run dev",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "electron-pack": "node_modules/.bin/electron-builder",
+    "electron-build": "node_modules/.bin/electron-builder --arch=all"
   },
   "dependencies": {
     "bulma": "^0.7.1",
     "chart.js": "^2.7.2",
     "chokidar": "^2.0.3",
-    "electron": "^1.8.5",
-    "electron-builder": "^20.10.0",
     "electron-json-storage": "^4.1.0",
     "electron-settings": "^3.1.4",
     "fs": "^0.0.1-security",
@@ -44,6 +44,8 @@
     "copy-webpack-plugin": "^4.0.1",
     "cross-env": "^5.0.1",
     "css-loader": "^0.28.0",
+    "electron": "^1.8.5",
+    "electron-builder": "^20.10.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
@@ -93,12 +95,9 @@
   ],
   "build": {
     "appId": "greenskies.co2_analyzer",
-    "publish": [
-      {
-        "provider": "generic",
-        "url": "http://github.com/eidsonator/carbondioxide"
-      }
-    ],
+    "directories": {
+      "app": "app"
+    },
     "linux": {
       "target": "rpm",
       "category": "Network"
