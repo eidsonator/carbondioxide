@@ -33,51 +33,63 @@
         <div class="is-flex" style="justify-content: center">
           <co2-chart
             :data="state.co2ChartData" ref='co2Chart'
-            :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
-            :width="400"
-            :height="200"></co2-chart>
+            :options="{fill: false, pointRadius: 0}"></co2-chart>
         </div>
       </div>
       <div class="column ">
         <div class="is-flex" style="justify-content: center">
           <co2-chart
             :data="state.pressureChartData" ref='pressureChart'
-            :options="{responsive: false, maintainAspectRatio: false, fill: false, pointRadius: 0}"
-            :width="400"
-            :height="200"></co2-chart>
+            :options="{maintainAspectRatio: false, fill: false, pointRadius: 0}"></co2-chart>
         </div>
       </div>
     </div>
+    <div class="columns">
+      <div class="column"></div>
+      <div class="column is-two-thirds">
+        <h2>Samples</h2>
+        <table class="table">
+          <tr>
+            <th>Sample</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>CO<sub>2</sub></th>
+            <th>Cell Temp</th>
+            <th>Pressure</th>
+            <th>Flow Rate</th>
+          </tr>
+          <tr v-for="sample in state.samples" v-bind:key="sample.number">
+            <td>{{ sample.number }}</td>
+            <td>{{ sample.System_Date }}</td>
+            <td>{{ sample.System_Time }}</td>
+            <td>{{ sample.CO2 }}</td>
+            <td>{{ sample.Cell_Temperature }}</td>
+            <td>{{ sample.CellPressure }}</td>
+            <td>{{ sample.Flow_Rate }}</td>
+          </tr>
+          <tfoot>
+            <td colspan="99" align="center">
+              <div class="field has-addons">
+                <div class="control">
+                  <input class="input" v-model="exportFileName" placeholder="Export File Name">
+                </div>
+                <div class="control">
+                  <button class="button is-primary" @click="clickExport()">Export</button>
+                </div>
+              </div>
+            </td>
+          </tfoot>
+        </table>
+      </div>
+      <div class="column"></div>
+    </div>
 
-    <h2>Samples</h2>
-    <table class="table">
-      <tr>
-        <th>Sample</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>CO<sub>2</sub></th>
-        <th>Cell Temp</th>
-        <th>Pressure</th>
-        <th>Flow Rate</th>
-      </tr>
-      <tr v-for="sample in state.samples" v-bind:key="sample.number">
-        <td>{{ sample.number }}</td>
-        <td>{{ sample.System_Date }}</td>
-        <td>{{ sample.System_Time }}</td>
-        <td>{{ sample.CO2 }}</td>
-        <td>{{ sample.Cell_Temperature }}</td>
-        <td>{{ sample.CellPressure }}</td>
-        <td>{{ sample.Flow_Rate }}</td>
-      </tr>
-    </table>
+        <br>
 
-    <label>Export File Name</label>
-    <input v-model="exportFileName">
-    <button @click="clickExport()">Export</button>
-    <br>
 
-    <button @click="clickConfig()">Config</button>
-    <button @click="clickTest()">Test</button>
+
+    <button class="button" @click="clickConfig()">Config</button>
+    <button class="button" @click="clickTest()">Test</button>
   </div>
 </template>
 
