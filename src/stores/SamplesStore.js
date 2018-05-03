@@ -3,6 +3,10 @@ const fs = window.require("fs");
 const chokidar = window.require('electron').remote.require("chokidar");
 const readLastLines = window.require('electron').remote.require("read-last-lines");
 const os = window.require('os');
+const endOfLine = os.EOL;
+const path = window.require('path');
+const seperator = path.sep;
+import Vue from 'vue';
 
 export default {
   state: {
@@ -62,6 +66,25 @@ export default {
 
     this.state.pressureChartData.labels.push(this.state.currentRead.System_Time);
     this.state.pressureChartData.datasets[0].data.push(this.state.currentRead.CellPressure);
+
+    (new Vue()).$emit('update_charts');
+  },
+  writeFile(exportFileName) {
+    //todo ensure that filename is input
+
+    let exportFile = settings.get('exportDirectory') + seperator + exportFileName;
+    if (fs.existsSync(exportFile)) {
+      fs.truncateSync(exportFile);
+    }
+
+    let data = "date, time, sample, co2, temp, pressure, rate" + endOfLine;
+    fs.appendFileSync(exportFile, data);
+    this.state.samples.forEach(function(sample) {
+      data = `${sample.System_Date}, ${sample.System_Time}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.Flow_Rate}${endOfLine}`;
+      fs.appendFileSync(exportFile, data);
+    });
+    // to do exported notification!
+    window.alert('Exported to ' + exportFile);
   },
   startPoller() {
     const watcher = chokidar.watch(this.state.filepath);
@@ -117,13 +140,12 @@ export default {
               this.state.sampleFound = false;
               this.state.downwardCarbonDioxideTrend = 0;
               this.state.ticks = 0;
-              // increment our sample number
+
               this.state.sampleNumber++;
               this.state.message = "Waiting for";
             }
           }
         }
-        console.log(this.state.currentRead);
       });
     });
 
