@@ -1,33 +1,27 @@
 <template>
   <div>
-    <h3>Settings</h3>
     <div class="columns">
       <div class="column"></div>
-      <div class="column">
-        <div class="file has-name is-fullwidth is-primary">
-          <label class="file-label">
-            <input class="file-input" id="file" type="file" @change="save()">
-            <span class="file-cta" style="width: 175px;">
-              <span class="file-icon">
-                <i class="fas fa-upload"></i>
+      <div class="column box">
+        <h3>Settings</h3>
+          <div class="file has-name is-fullwidth is-primary">
+            <label class="file-label">
+              <input class="file-input" id="file" type="file" @change="save()">
+              <span class="file-cta" style="width: 175px;">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">
+                  Read from file:
+                </span>
               </span>
-              <span class="file-label">
-                Read from file:
+              <span class="file-name">
+                {{ filepath }}
               </span>
-            </span>
-            <span class="file-name">
-              {{ filepath }}
-            </span>
-          </label>
-        </div>
-      </div>
-      <div class="column"></div>
-    </div>
-
-    <div class="columns">
-      <div class="column"></div>
-      <div class="column">
-        <div class="file has-name is-fullwidth is-primary">
+            </label>
+          </div>
+          <hr>
+          <div class="file has-name is-fullwidth is-primary">
           <label class="file-label">
             <input class="file-input" id="exportDirectory" type="file" webkitdirectory @change="setDirectory">
             <span class="file-cta" style="width: 175px;">
@@ -47,32 +41,29 @@
       <div class="column"></div>
     </div>
 
-    <h3>Advanced Settings</h3>
     <div class="columns">
       <div class="column"></div>
-      <div class="column">
-
+      <div class="column box">
+        <h3>Advanced Settings</h3>
         <div class="field is-horizontal">
-          <div class="field-body">
-            <div class="field is-expanded">
-              <div class="field has-addons">
-                <p class="control">
-                  <a class="button is-static" style="width: 175px;">
-                    Lines offset:
-                  </a>
-                </p>
-                <p class="control is-expanded">
-                  <input class="input" v-model="linesOffset" @cange="saveOffset()">
-                </p>
+            <div class="field-body">
+              <div class="field is-expanded">
+                <div class="field has-addons">
+                  <p class="control">
+                    <a class="button is-static" style="width: 175px;">
+                      Lines offset:
+                    </a>
+                  </p>
+                  <p class="control is-expanded">
+                    <input class="input" v-model="linesOffset" @cange="saveOffset()">
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
       </div>
       <div class="column"></div>
     </div>
-    <br>
     <hr>
     <button class="button is-primary" @click="clickDone">Done</button>
   </div>
