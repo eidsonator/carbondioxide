@@ -12,8 +12,11 @@
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
     "build": "node build/build.js",
+    "preelectron-build": "yarn build",
     "electron-pack": "node_modules/.bin/electron-builder",
-    "electron-build": "node_modules/.bin/electron-builder --arch=all"
+    "electron-build": "yarn electron-build-lin && yarn electron-build-win",
+    "electron-build-lin": "node_modules/.bin/electron-builder -l",
+    "electron-build-win": "node_modules/.bin/electron-builder -w --x64 --ia32"
   },
   "dependencies": {
     "bulma": "^0.7.1",
