@@ -29,23 +29,19 @@ export default {
     exportFileName: null,
     co2ChartData: {
       labels: [],
-      datasets: [
-        {
-          label: 'CO2',
-          backgroundColor: '#f87979',
-          data: []
-        }
-      ]
+      datasets: [{
+        label: 'CO2',
+        backgroundColor: '#f87979',
+        data: []
+      }]
     },
     pressureChartData: {
       labels: [],
-      datasets: [
-        {
-          label: 'pressure',
-          backgroundColor: '#0079f8',
-          data: []
-        }
-      ]
+      datasets: [{
+        label: 'pressure',
+        backgroundColor: '#0079f8',
+        data: []
+      }]
     }
   },
   saveSample() {
@@ -77,74 +73,103 @@ export default {
 
     let data = "date, time, sample, co2, temp, pressure, rate" + endOfLine;
     fs.appendFileSync(exportFile, data);
-    this.state.samples.forEach(function(sample) {
+    this.state.samples.forEach(function (sample) {
       data = `${sample.System_Date}, ${sample.System_Time}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.Flow_Rate}${endOfLine}`;
       fs.appendFileSync(exportFile, data);
     });
     // to do exported notification!
     window.alert('Exported to ' + exportFile);
   },
+  analyzePressureDrop() {
+    //the tubes have not been inserted yet
+    let pressureDelta =
+      this.state.ambientPressure - this.state.currentRead.CellPressure;
+    if (pressureDelta > 5) {
+      this.state.pressureDropFound = true;
+      this.state.message = "CO2 building for";
+    }
+  },
+  lookForPeak() {
+    //still watching the CO2 climb
+    if (this.state.lastRead.CO2 - this.state.currentRead.CO2 > 0) {
+      this.state.downwardCarbonDioxideTrend++;
+    }
+    if (this.state.downwardCarbonDioxideTrend == 2) {
+      this.state.peakFound = true;
+      this.state.message = "Reading";
+    }
+  },
+  lookForSample() {
+    //we have a peak, waiting for sample
+    this.state.ticks++;
+    if (this.state.ticks == 10) {
+      this.saveSample();
+      this.state.sampleFound = true;
+      this.state.message = "Completed";
+    }
+  },
+  lookForReset() {
+    //waiting for CO2 to drop to ~room levels
+    if (this.state.currentRead.CO2 < this.state.CO2Baseline) {
+      // system is flused ready for next sample
+      //reset everything
+      this.state.ambientPressure = null;
+      this.state.pressureDropFound = false;
+      this.state.peakFound = false;
+      this.state.sampleFound = false;
+      this.state.downwardCarbonDioxideTrend = 0;
+      this.state.ticks = 0;
+
+      this.state.sampleNumber++;
+      this.state.message = "Waiting for";
+    }
+
+  },
+  waitingForPressureDrop() {
+    return !this.state.pressureDropFound;
+  },
+  waitingForPeak() {
+    return !this.state.peakFound;
+  },
+  waitingForSample() {
+    return !this.state.sampleFound;
+  },
+  analyze() {
+    if (this.waitingForPressureDrop()) {
+      this.analyzePressureDrop();
+    } else if (this.waitingForPeak()) {
+      this.lookForPeak();
+    } else if (this.waitingForSample()) {
+      this.lookForSample();
+    } else {
+      this.lookForReset();
+    }
+  },
+  readRecord() {
+    const linesOffset = settings.get('linesOffset', 4);
+    readLastLines.read(this.state.filepath, linesOffset).then(lines => {
+      let line = lines.trim();
+      this.state.lastRead = this.state.currentRead;
+      this.state.currentRead = createReadObject(line);
+      if (isNaN(this.state.currentRead.CO2)) {
+        return;
+      }
+      this.updateCharts();
+
+      if (!this.state.ambientPressure) {
+        this.state.ambientPressure = this.state.currentRead.CellPressure;
+        this.state.CO2Baseline = this.state.currentRead.CO2 * 1.1;
+      }
+      if (this.state.lastRead) {
+        this.analyze();
+      }
+    });
+
+  },
   startPoller() {
     const watcher = chokidar.watch(this.state.filepath);
-    const linesOffset = settings.get('linesOffset', 4);
     watcher.on("change", () => {
-      readLastLines.read(this.state.filepath, linesOffset).then(lines => {
-        let line = lines.trim();
-        this.state.lastRead = this.state.currentRead;
-        this.state.currentRead = createReadObject(line);
-        if(isNaN(this.state.currentRead.CO2)) {
-          return;
-        }
-        this.updateCharts();
-
-        if (!this.state.ambientPressure) {
-          this.state.ambientPressure = this.state.currentRead.CellPressure;
-          this.state.CO2Baseline = this.state.currentRead.CO2 * 1.1;
-        }
-        if (this.state.lastRead) {
-          if (!this.state.pressureDropFound) {
-            //the tubes have not been inserted yet
-            let pressureDelta =
-              this.state.ambientPressure - this.state.currentRead.CellPressure;
-            if (pressureDelta > 5) {
-              this.state.pressureDropFound = true;
-              this.state.message= "CO2 building for";
-            }
-          } else if (!this.state.peakFound) {
-            //still watching the CO2 climb
-            if (this.state.lastRead.CO2 - this.state.currentRead.CO2 > 0) {
-              this.state.downwardCarbonDioxideTrend++;
-            }
-            if (this.state.downwardCarbonDioxideTrend == 2) {
-              this.state.peakFound = true;
-              this.state.message = "Reading";
-            }
-          } else if (!this.state.sampleFound) {
-            //we have a peak, waiting for sample
-            this.state.ticks++;
-            if (this.state.ticks == 10) {
-              this.saveSample();
-              this.state.sampleFound = true;
-              this.state.message = "Completed";
-            }
-          } else {
-            //waiting for CO2 to drop to ~room levels
-            if (this.state.currentRead.CO2 < this.state.CO2Baseline) {
-              // system is flused ready for next sample
-              //reset everything
-              this.state.ambientPressure = null;
-              this.state.pressureDropFound = false;
-              this.state.peakFound = false;
-              this.state.sampleFound = false;
-              this.state.downwardCarbonDioxideTrend = 0;
-              this.state.ticks = 0;
-
-              this.state.sampleNumber++;
-              this.state.message = "Waiting for";
-            }
-          }
-        }
-      });
+      this.readRecord();
     });
 
 
