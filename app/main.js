@@ -11,7 +11,7 @@ const url = require('url')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
+function createWindow() {
   const WEB_FOLDER = '';
   const PROTOCOL = 'file';
 
@@ -25,16 +25,18 @@ function createWindow () {
     // url = url.replace(/\\/g, '/');
     url = path.normalize(url);
     console.log(url);
-    callback({path: url});
+    callback({
+      path: url
+    });
   });
 
-// Create the browser window.
+  // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600
   });
 
-// and load the index.html of the app.
+  // and load the index.html of the app.
   mainWindow.loadURL(url.format({
     pathname: 'index.html',
     protocol: PROTOCOL + ':',
@@ -42,7 +44,7 @@ function createWindow () {
   }));
 
   // Open the DevTools.
-//  mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
