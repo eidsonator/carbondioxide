@@ -87,23 +87,22 @@
         <br>
 
 
-
+    <button class="button is-primary" @click="clickStart()">Start</button>
     <button class="button" @click="clickConfig()">Config</button>
     <button class="button" @click="clickTest()">Test</button>
   </div>
 </template>
 
 <script>
-import SamplesStore from '../stores/SamplesStore.js';
-import Co2Chart from './Co2Chart';
+import SamplesStore from "../stores/SamplesStore.js";
+import Co2Chart from "./Co2Chart";
 
-const settings = window.require('electron').remote.require('electron-settings');
-
+const settings = window.require("electron").remote.require("electron-settings");
 
 export default {
   name: "Collect",
   components: {
-    'Co2Chart': Co2Chart
+    Co2Chart: Co2Chart
   },
   data() {
     return {
@@ -120,13 +119,16 @@ export default {
   },
   methods: {
     clickConfig: function() {
-      this.$router.push({name: 'Config'});
+      this.$router.push({ name: "Config" });
     },
     clickTest: function() {
-      this.$router.push({name: 'Tests'});
+      this.$router.push({ name: "Tests" });
     },
     clickExport: function() {
       SamplesStore.writeFile(this.exportFileName);
+    },
+    clickStart: function() {
+      SamplesStore.startPoller();
     }
   }
 };

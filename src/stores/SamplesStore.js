@@ -1,16 +1,16 @@
 const settings = window.require('electron').remote.require('electron-settings');
 const fs = window.require("fs");
-const chokidar = window.require('electron').remote.require("chokidar");
-const readLastLines = window.require('electron').remote.require("read-last-lines");
 const os = window.require('os');
 const endOfLine = os.EOL;
 const path = window.require('path');
 const seperator = path.sep;
+const serialport = window.require('electron').remote.require("serialport");
+
 import Vue from 'vue';
 
 export default {
   state: {
-    sampleNumber: 3,
+    port: null,
     samples: null,
     message: "Waiting for",
     sampleNumber: 1,
@@ -25,7 +25,6 @@ export default {
     downwardCarbonDioxideTrend: 0,
     ticks: 0,
     CO2Baseline: null,
-    filepath: settings.get('filepath'),
     exportFileName: null,
     co2ChartData: {
       labels: [],
@@ -145,35 +144,44 @@ export default {
       this.lookForReset();
     }
   },
-  readRecord() {
-    const linesOffset = settings.get('linesOffset', 4);
-    readLastLines.read(this.state.filepath, linesOffset).then(lines => {
-      let line = lines.trim();
-      this.state.lastRead = this.state.currentRead;
-      this.state.currentRead = createReadObject(line);
-      if (isNaN(this.state.currentRead.CO2)) {
-        return;
-      }
-      this.updateCharts();
+  processData(data) {
+    this.state.lastRead = this.state.currentRead;
+    this.state.currentRead = createReadObject(data);
+    if (isNaN(this.state.currentRead.CO2)) {
+      return;
+    }
+    this.updateCharts();
 
-      if (!this.state.ambientPressure) {
-        this.state.ambientPressure = this.state.currentRead.CellPressure;
-        this.state.CO2Baseline = this.state.currentRead.CO2 * 1.1;
-      }
-      if (this.state.lastRead) {
-        this.analyze();
-      }
-    });
+    if (!this.state.ambientPressure) {
+      this.state.ambientPressure = this.state.currentRead.CellPressure;
+      this.state.CO2Baseline = this.state.currentRead.CO2 * 1.1;
+    }
+    if (this.state.lastRead) {
+      this.analyze();
+    }
 
   },
   startPoller() {
-    const watcher = chokidar.watch(this.state.filepath);
-    watcher.on("change", () => {
-      this.readRecord();
+    let usb = settings.get('comName');
+    this.port = new serialport(usb);
+    let xml = `
+    <li830>
+      <cfg>
+        <outrate>1</outrate>
+      </cfg>
+      <rs232>
+        <strip>true</strip>
+      </rs232>
+    </li830>
+    `;
+    this.port.write(xml);
+    this.port.on('data', (data) => {
+      console.log('data');
+      // an xml message is a response other than a reading
+      if (!data.contains('<li830>')) {
+        this.processData(data);
+      }
     });
-
-
-    console.log(this.state.sampleNumber)
   }
 }
 
