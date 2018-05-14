@@ -176,7 +176,8 @@ export default {
     `;
     this.port.write(xml);
     this.port.on('data', (data) => {
-      console.log('data');
+      data = data.toString('utf8');
+      console.log(data);
       // an xml message is a response other than a reading
       if (!data.contains('<li830>')) {
         this.processData(data);
