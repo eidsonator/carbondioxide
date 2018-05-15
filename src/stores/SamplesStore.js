@@ -164,8 +164,8 @@ export default {
   startPoller() {
     let usb = settings.get('comName');
     this.port = new serialport(usb);
-    const Regex = window.require('electron').remote.require('@serialport/parser-regex');
-    const parser = port.pipe(new Regex({
+    const parsers = serialport.parsers;
+    const parser = this.port.pipe(new parsers.Regex({
       regex: /<\/li830>/
     }));
 
