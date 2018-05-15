@@ -1,4 +1,4 @@
-<template>
+`<template>
   <div>
     <div class="columns">
       <div class="column"></div>
@@ -53,39 +53,40 @@
 </template>
 
 <script>
-const settings = window.require('electron').remote.require('electron-settings');
-const serialport = window.require('electron').remote.require('serialport');
+const settings = window.require("electron").remote.require("electron-settings");
+const serialport = window.require("electron").remote.require("serialport");
 
 export default {
   name: "Config",
   data() {
     return {
       ports: null,
-      comName: settings.get('comName', null),
-      exportDirectory: settings.get('exportDirectory'),
-      linesOffset: settings.get('linesOffset', 4)
+      comName: settings.get("comName", null),
+      exportDirectory: settings.get("exportDirectory"),
+      linesOffset: settings.get("linesOffset", 4)
     };
   },
   beforeCreate() {
     serialport.list((err, ports) => {
-      console.log('ports', ports);
+      console.log("ports", ports);
       this.ports = ports;
     });
   },
   methods: {
     setDirectory: function() {
-      let exportDirectory = document.getElementById('exportDirectory').files[0].path;
-      settings.set('exportDirectory', exportDirectory);
-      this.exportDirectory = settings.get('exportDirectory')
+      let exportDirectory = document.getElementById("exportDirectory").files[0]
+        .path;
+      settings.set("exportDirectory", exportDirectory);
+      this.exportDirectory = settings.get("exportDirectory");
     },
     clickDone: function() {
-      settings.set('linesOffset', this.linesOffset);
-      settings.set('comName', this.comName);
-      this.$router.push({name: 'Collect'});
+      settings.set("linesOffset", this.linesOffset);
+      settings.set("comName", this.comName);
+      this.$router.push({ name: "Collect" });
     }
   },
   Created() {
-      this.filepath = settings.get('filepath')
+    this.filepath = settings.get("filepath");
   }
 };
 </script>

@@ -164,24 +164,26 @@ export default {
   startPoller() {
     let usb = settings.get('comName');
     this.port = new serialport(usb);
+    const Regex = window.require('electron').remote.require('@serialport/parser-regex');
+    const parser = port.pipe(new Regex({
+      regex: /<\/li830>/
+    }));
+
     let xml = `
     <li830>
       <cfg>
         <outrate>1</outrate>
       </cfg>
       <rs232>
-        <strip>true</strip>
+        <strip>false</strip>
       </rs232>
     </li830>
     `;
+
     this.port.write(xml);
-    this.port.on('data', (data) => {
-      console.log('data');
-      // an xml message is a response other than a reading
-      if (!data.contains('<li830>')) {
-        this.processData(data);
-      }
-    });
+    parser.on('data', function (data) {
+      console.log(data);
+    })
   }
 }
 
