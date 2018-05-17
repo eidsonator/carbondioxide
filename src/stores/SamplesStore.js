@@ -185,10 +185,11 @@ export default {
         baudRate: 9600
     });
     const parsers = serialport.parsers;
+    let self = this;
     this.port.on("open", function() {
-        this.port.write(xml);
+        self.port.write(xml);
         delay(1000);
-        const parser = this.port.pipe(new parsers.Regex({
+        const parser = self.port.pipe(new parsers.Regex({
             regex: /<\/li830>/
         }));
         parser.on('data', function (data) {
