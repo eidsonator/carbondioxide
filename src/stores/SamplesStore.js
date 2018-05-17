@@ -162,28 +162,39 @@ export default {
 
   },
   startPoller() {
-    let usb = settings.get('comName');
-    this.port = new serialport(usb);
-    const parsers = serialport.parsers;
-    const parser = this.port.pipe(new parsers.Regex({
-      regex: /<\/li830>/
-    }));
-
     let xml = `
     <li830>
       <cfg>
         <outrate>1</outrate>
       </cfg>
       <rs232>
+        <co2>true</co2>
+        <flowrate>false</flowrate>        
+        <celltemp>true</celltemp>
+        <cellpres>true</cellpres>
+        <ivolt>false</ivolt>
+        <co2abs>false</co2abs>        
+        <raw>false</raw>
+        <echo>false</echo>
         <strip>false</strip>
       </rs232>
     </li830>
     `;
-
-    this.port.write(xml);
-    parser.on('data', function (data) {
-      console.log(data);
-    })
+    let usb = settings.get('comName');
+    this.port = new serialport(usb, {
+        baudRate: 9600
+    });
+    const parsers = serialport.parsers;
+    this.port.on("open", function() {
+        this.port.write(xml);
+        delay(1000);
+        const parser = this.port.pipe(new parsers.Regex({
+            regex: /<\/li830>/
+        }));
+        parser.on('data', function (data) {
+            console.log(data);
+        });
+    });
   }
 }
 
