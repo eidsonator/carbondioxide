@@ -169,11 +169,11 @@ export default {
       </cfg>
       <rs232>
         <co2>true</co2>
-        <flowrate>false</flowrate>        
+        <flowrate>false</flowrate>
         <celltemp>true</celltemp>
         <cellpres>true</cellpres>
         <ivolt>false</ivolt>
-        <co2abs>false</co2abs>        
+        <co2abs>false</co2abs>
         <raw>false</raw>
         <echo>false</echo>
         <strip>false</strip>
@@ -182,19 +182,19 @@ export default {
     `;
     let usb = settings.get('comName');
     this.port = new serialport(usb, {
-        baudRate: 9600
+      baudRate: 9600
     });
     const parsers = serialport.parsers;
     let self = this;
-    this.port.on("open", function() {
-        self.port.write(xml);
-        delay(1000);
-        const parser = self.port.pipe(new parsers.Regex({
-            regex: /<\/li830>/
-        }));
-        parser.on('data', function (data) {
-            console.log(data);
-        });
+    this.port.on("open", function () {
+      console.log('port opened');
+      self.port.write(xml);
+      const parser = self.port.pipe(new parsers.Regex({
+        regex: /<\/li830>/
+      }));
+      parser.on('data', function (data) {
+        console.log(data);
+      });
     });
   }
 }
