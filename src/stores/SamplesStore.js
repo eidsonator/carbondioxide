@@ -5,6 +5,8 @@ const endOfLine = os.EOL;
 const path = window.require('path');
 const seperator = path.sep;
 const serialport = window.require('electron').remote.require("serialport");
+const xmlParse = window.require('xml2js').parseString;
+
 
 import Vue from 'vue';
 
@@ -12,7 +14,7 @@ export default {
   state: {
     port: null,
     samples: null,
-    message: "Waiting for",
+    message: "Start",
     sampleNumber: 1,
     samples: [],
     records: [],
@@ -46,6 +48,23 @@ export default {
   saveSample() {
     let sample = this.state.currentRead;
     sample.number = this.state.sampleNumber;
+    let carbon = null;
+    if (sample.number == 1) {
+      carbon = 0;
+    } else {
+      let baseCo2 = this.state.samples[0].CO2;
+
+      let pA = sample.CellPressure * .0098;
+      let temp = sample.Cell_Temperature + 273.15;
+      let V = 140;
+      let R = 82.05;
+      let n = ((pA * V) / (R * temp));
+      let co2 = sample.CO2 - baseCo2;
+
+      carbon = n * co2;
+    }
+    sample.carbon = carbon;
+    console.log(sample);
     this.state.samples.push(sample);
   },
   updateCharts() {
@@ -56,10 +75,10 @@ export default {
       this.state.pressureChartData.labels.shift();
     }
 
-    this.state.co2ChartData.labels.push(this.state.currentRead.System_Time);
+    this.state.co2ChartData.labels.push(this.state.currentRead.System_Date);
     this.state.co2ChartData.datasets[0].data.push(this.state.currentRead.CO2);
 
-    this.state.pressureChartData.labels.push(this.state.currentRead.System_Time);
+    this.state.pressureChartData.labels.push(this.state.currentRead.System_Date);
     this.state.pressureChartData.datasets[0].data.push(this.state.currentRead.CellPressure);
   },
   writeFile(exportFileName) {
@@ -70,10 +89,11 @@ export default {
       fs.truncateSync(exportFile);
     }
 
-    let data = "date, time, sample, co2, temp, pressure, rate" + endOfLine;
+    let data = "date, sample, co2, temp, pressure, carbon" + endOfLine;
     fs.appendFileSync(exportFile, data);
     this.state.samples.forEach(function (sample) {
-      data = `${sample.System_Date}, ${sample.System_Time}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.Flow_Rate}${endOfLine}`;
+      data = `${sample.System_Date}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.carbon}${endOfLine}`;
+
       fs.appendFileSync(exportFile, data);
     });
     // to do exported notification!
@@ -85,23 +105,13 @@ export default {
       this.state.ambientPressure - this.state.currentRead.CellPressure;
     if (pressureDelta > 5) {
       this.state.pressureDropFound = true;
-      this.state.message = "CO2 building for";
-    }
-  },
-  lookForPeak() {
-    //still watching the CO2 climb
-    if (this.state.lastRead.CO2 - this.state.currentRead.CO2 > 0) {
-      this.state.downwardCarbonDioxideTrend++;
-    }
-    if (this.state.downwardCarbonDioxideTrend == 2) {
-      this.state.peakFound = true;
       this.state.message = "Reading";
     }
   },
   lookForSample() {
     //we have a peak, waiting for sample
     this.state.ticks++;
-    if (this.state.ticks == 10) {
+    if (this.state.ticks == 45) {
       this.saveSample();
       this.state.sampleFound = true;
       this.state.message = "Completed";
@@ -109,7 +119,7 @@ export default {
   },
   lookForReset() {
     //waiting for CO2 to drop to ~room levels
-    if (this.state.currentRead.CO2 < this.state.CO2Baseline) {
+    if (this.state.currentRead.CO2 < 1000) {
       // system is flused ready for next sample
       //reset everything
       this.state.ambientPressure = null;
@@ -120,15 +130,12 @@ export default {
       this.state.ticks = 0;
 
       this.state.sampleNumber++;
-      this.state.message = "Waiting for";
+      this.state.message = "Start";
     }
 
   },
   waitingForPressureDrop() {
     return !this.state.pressureDropFound;
-  },
-  waitingForPeak() {
-    return !this.state.peakFound;
   },
   waitingForSample() {
     return !this.state.sampleFound;
@@ -136,8 +143,6 @@ export default {
   analyze() {
     if (this.waitingForPressureDrop()) {
       this.analyzePressureDrop();
-    } else if (this.waitingForPeak()) {
-      this.lookForPeak();
     } else if (this.waitingForSample()) {
       this.lookForSample();
     } else {
@@ -147,6 +152,7 @@ export default {
   processData(data) {
     this.state.lastRead = this.state.currentRead;
     this.state.currentRead = createReadObject(data);
+
     if (isNaN(this.state.currentRead.CO2)) {
       return;
     }
@@ -184,31 +190,53 @@ export default {
     this.port = new serialport(usb, {
       baudRate: 9600
     });
+
+    window.port = this.port;
+
     const parsers = serialport.parsers;
     let self = this;
-    this.port.on("open", function () {
-      console.log('port opened');
-      self.port.write(xml);
-      const parser = self.port.pipe(new parsers.Regex({
-        regex: /<\/li830>/
-      }));
-      parser.on('data', function (data) {
-        console.log(data);
+    this.port.on('error', function (err) {
+      console.log('Error: ', err.message);
+    })
+
+    // let s = '';
+    // this.port.on('data', function (data) {
+    //   s += data.toString();
+    //   console.log('Data:', s);
+    // });
+
+    self.parser = self.port.pipe(new parsers.Delimiter({
+      delimiter: '</li830>'
+    }));
+
+    self.port.write(xml, function (err) {
+      if (err) {
+        return console.log('Error on write: ', err.message);
+      }
+      console.log('message written');
+
+    });
+    self.parser.on('data', function (data) {
+
+      xml = data.toString() + '</li830>';
+      xmlParse(xml, function (err, result) {
+        if (result.li830.hasOwnProperty('data')) {
+          self.processData(result.li830.data[0]);
+        }
+
       });
     });
   }
 }
 
-function createReadObject(line) {
-  let obj = line.split(/\s+/);
+function createReadObject(record) {
+
   //to do throw error if unexpected format
-  let val = {
-    System_Date: obj[0],
-    System_Time: obj[1],
-    CO2: Number(obj[2]),
-    Cell_Temperature: Number(obj[3]),
-    CellPressure: Number(obj[4]),
-    Flow_Rate: Number(obj[5])
+
+  return {
+    System_Date: (new Date).toString(),
+    CO2: Number(record.co2),
+    Cell_Temperature: Number(record.celltemp[0]),
+    CellPressure: Number(record.cellpres[0])
   };
-  return val;
 }

@@ -11,9 +11,6 @@
               <th>Date</th><td>{{ state.currentRead.System_Date }}</td>
             </tr>
             <tr>
-              <th>Time</th><td>{{ state.currentRead.System_Time }}</td>
-            </tr>
-            <tr>
               <th>CO<sub>2</sub></th><td>{{ state.currentRead.CO2 }}</td>
             </tr>
             <tr>
@@ -21,9 +18,6 @@
             </tr>
             <tr>
               <th>Pressure</th><td>{{ state.currentRead.CellPressure }}</td>
-            </tr>
-            <tr>
-              <th>Flow Rate</th><td>{{ state.currentRead.Flow_Rate }}</td>
             </tr>
           </table>
         </div>
@@ -52,20 +46,18 @@
           <tr>
             <th>Sample</th>
             <th>Date</th>
-            <th>Time</th>
             <th>CO<sub>2</sub></th>
             <th>Cell Temp</th>
             <th>Pressure</th>
-            <th>Flow Rate</th>
+            <th>Carbon</th>
           </tr>
           <tr v-for="sample in state.samples" v-bind:key="sample.number">
             <td>{{ sample.number }}</td>
             <td>{{ sample.System_Date }}</td>
-            <td>{{ sample.System_Time }}</td>
             <td>{{ sample.CO2 }}</td>
             <td>{{ sample.Cell_Temperature }}</td>
             <td>{{ sample.CellPressure }}</td>
-            <td>{{ sample.Flow_Rate }}</td>
+            <td>{{ sample.carbon }}</td>
           </tr>
           <tfoot>
             <td colspan="99" align="center">

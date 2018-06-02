@@ -1,6 +1,6 @@
 {
   "name": "co2",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "A Vue.js project",
   "author": "Todd Eidson <todd@eidson.info>",
   "private": true,
@@ -21,7 +21,9 @@
     "vue": "^2.5.2",
     "vue-chartjs": "^3.3.1",
     "vue-devtools": "^3.1.9",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "xml2js": "^0.4.19"
+
   },
   "devDependencies": {
     "electron-rebuild": "^1.7.3"
