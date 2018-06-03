@@ -1,29 +1,27 @@
 {
   "name": "co2",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "A Vue.js project",
   "author": "Todd Eidson <todd@eidson.info>",
   "private": true,
   "main": "main.js",
   "scripts": {
-    "install": "electron-rebuild",
-    "postinstall": "electron-builder install-app-deps"
+    "install": "electron-rebuild"
   },
   "dependencies": {
     "bulma": "^0.7.1",
     "chart.js": "^2.7.2",
     "chokidar": "^2.0.3",
+    "electron-json-storage": "^4.1.0",
     "electron-settings": "^3.1.4",
     "fs": "^0.0.1-security",
     "read-last-lines": "^1.4.0",
     "serialport": "^6.2.0",
-    "electron-json-storage": "^4.1.0",
     "vue": "^2.5.2",
     "vue-chartjs": "^3.3.1",
     "vue-devtools": "^3.1.9",
     "vue-router": "^3.0.1",
     "xml2js": "^0.4.19"
-
   },
   "devDependencies": {
     "electron-rebuild": "^1.7.3"
