@@ -5,7 +5,8 @@ const endOfLine = os.EOL;
 const path = window.require('path');
 const seperator = path.sep;
 const serialport = window.require('electron').remote.require("serialport");
-const xmlParse = window.require('xml2js').parseString;
+const xmlParse = window.require('electron').remote.require('xml2js').parseString;
+
 
 
 import Vue from 'vue';
@@ -56,15 +57,14 @@ export default {
 
       let pA = sample.CellPressure * .0098;
       let temp = sample.Cell_Temperature + 273.15;
-      let V = 140;
+      let V = 14.5;
       let R = 82.05;
-      let n = ((pA * V) / (R * temp));
+      let n = (pA * V) / (R * temp);
       let co2 = sample.CO2 - baseCo2;
 
-      carbon = n * co2;
+      carbon = n * co2 * 12;
     }
     sample.carbon = carbon;
-    console.log(sample);
     this.state.samples.push(sample);
   },
   updateCharts() {
@@ -196,14 +196,8 @@ export default {
     const parsers = serialport.parsers;
     let self = this;
     this.port.on('error', function (err) {
-      console.log('Error: ', err.message);
+      window.alert('Error: ', err.message);
     })
-
-    // let s = '';
-    // this.port.on('data', function (data) {
-    //   s += data.toString();
-    //   console.log('Data:', s);
-    // });
 
     self.parser = self.port.pipe(new parsers.Delimiter({
       delimiter: '</li830>'
@@ -211,9 +205,8 @@ export default {
 
     self.port.write(xml, function (err) {
       if (err) {
-        return console.log('Error on write: ', err.message);
+        window.alert('Error on write: ', err.message);
       }
-      console.log('message written');
 
     });
     self.parser.on('data', function (data) {
