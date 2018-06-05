@@ -24,7 +24,7 @@ function createWindow() {
     // Replace backslashes by forward slashes (windows)
     // url = url.replace(/\\/g, '/');
     url = path.normalize(url);
-    console.log(url);
+
     callback({
       path: url
     });
@@ -44,7 +44,7 @@ function createWindow() {
   }));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
