@@ -89,10 +89,10 @@ export default {
       fs.truncateSync(exportFile);
     }
 
-    let data = "date, sample, co2, temp, pressure, carbon" + endOfLine;
+    let data = "sample, carbon" + endOfLine;
     fs.appendFileSync(exportFile, data);
     this.state.samples.forEach(function (sample) {
-      data = `${sample.System_Date}, ${sample.number}, ${sample.CO2}, ${sample.Cell_Temperature}, ${sample.CellPressure}, ${sample.carbon}${endOfLine}`;
+      data = `${sample.number}, ${sample.carbon}${endOfLine}`;
 
       fs.appendFileSync(exportFile, data);
     });
