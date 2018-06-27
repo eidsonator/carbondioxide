@@ -16,7 +16,7 @@ export default {
     port: null,
     samples: null,
     message: "Start",
-    sampleNumber: 1,
+    sampleNumber: 0,
     samples: [],
     records: [],
     ambientPressure: 0,
