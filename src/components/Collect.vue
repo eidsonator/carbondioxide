@@ -45,18 +45,10 @@
         <table class="table">
           <tr>
             <th>Sample</th>
-            <th>Date</th>
-            <th>CO<sub>2</sub></th>
-            <th>Cell Temp</th>
-            <th>Pressure</th>
             <th>Carbon</th>
           </tr>
           <tr v-for="sample in state.samples" v-bind:key="sample.number">
             <td>{{ sample.number }}</td>
-            <td>{{ sample.System_Date }}</td>
-            <td>{{ sample.CO2 }}</td>
-            <td>{{ sample.Cell_Temperature }}</td>
-            <td>{{ sample.CellPressure }}</td>
             <td>{{ sample.carbon }}</td>
           </tr>
           <tfoot>
