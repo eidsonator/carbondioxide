@@ -124,6 +124,13 @@ export default {
     }
   },
   skipSample() {
+    //save the bad sample
+    let sample = this.state.currentRead;
+    sample.number = this.state.sampleNumber;
+    let carbon = null;
+    sample.carbon = carbon;
+    this.state.samples.push(sample);
+
     this.state.sampleFound = true;
     this.state.message = "Skipping";
   },
