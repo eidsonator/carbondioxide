@@ -73,7 +73,7 @@
 
     <button class="button is-primary" @click="clickStart()">Start</button>
     <button class="button" @click="clickConfig()">Config</button>
-    <button class="button" @click="clickTest()">Test</button>
+    <button class="button is-danger" @click="clickSkip()">Skip Sample</button>
   </div>
 </template>
 
@@ -105,8 +105,8 @@ export default {
     clickConfig: function() {
       this.$router.push({ name: "Config" });
     },
-    clickTest: function() {
-      this.$router.push({ name: "Tests" });
+    clickSkip: function() {
+      SamplesStore.skipSample();
     },
     clickExport: function() {
       SamplesStore.writeFile(this.exportFileName);

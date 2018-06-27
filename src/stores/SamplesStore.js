@@ -50,7 +50,7 @@ export default {
     let sample = this.state.currentRead;
     sample.number = this.state.sampleNumber;
     let carbon = null;
-    if (sample.number == 1) {
+    if (sample.number == 0) {
       carbon = 0;
     } else {
       let baseCo2 = this.state.samples[0].CO2;
@@ -120,18 +120,23 @@ export default {
   lookForReset() {
     //waiting for CO2 to drop to ~room levels
     if (this.state.currentRead.CO2 < 1000) {
-      // system is flused ready for next sample
-      //reset everything
-      this.state.ambientPressure = null;
-      this.state.pressureDropFound = false;
-      this.state.peakFound = false;
-      this.state.sampleFound = false;
-      this.state.downwardCarbonDioxideTrend = 0;
-      this.state.ticks = 0;
-
-      this.state.sampleNumber++;
-      this.state.message = "Start";
+      this.advanceSample();
     }
+  },
+  skipSample() {
+    this.state.sampleFound = true;
+    this.state.message = "Skipping";
+  },
+  advanceSample() {
+    this.state.ambientPressure = null;
+    this.state.pressureDropFound = false;
+    this.state.peakFound = false;
+    this.state.sampleFound = false;
+    this.state.downwardCarbonDioxideTrend = 0;
+    this.state.ticks = 0;
+
+    this.state.sampleNumber++;
+    this.state.message = "Start";
 
   },
   waitingForPressureDrop() {
