@@ -81,8 +81,9 @@ export default {
     this.state.pressureChartData.labels.push(this.state.currentRead.System_Date);
     this.state.pressureChartData.datasets[0].data.push(this.state.currentRead.CellPressure);
   },
-  writeFile(exportFileName) {
+  writeFile(exportDate, exportTray, exportType) {
     //todo ensure that filename is input
+    let exportFileName = `${exportDate.replace(/-/g, "")}-${exportType}-${exportTray}.csv`;
 
     let exportFile = settings.get('exportDirectory') + seperator + exportFileName;
     if (fs.existsSync(exportFile)) {

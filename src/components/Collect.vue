@@ -52,16 +52,30 @@
             <td>{{ sample.carbon }}</td>
           </tr>
           <tfoot>
-            <td colspan="99" align="center">
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" v-model="exportFileName" placeholder="Export File Name">
-                </div>
-                <div class="control">
-                  <button class="button is-primary" @click="clickExport()">Export</button>
-                </div>
-              </div>
-            </td>
+            <tr>
+              <td colspan="99" align="center">
+                <form @submit.prevent="clickExport()">
+                  <div class="field has-addons">
+                    <div class="control" style="width: 256px">
+                      <input type="date" class="input" v-model="exportDate" placeholder="Sample Date" required>
+                    </div>
+                    <div class="control" style="width: 128px">
+                      <input class="input" v-model="exportTray" placeholder="Tray" required>
+                    </div>
+                    <div class="control" style="width: 128px">
+                      <select class="input" v-model="exportType" required>
+                        <option value="" selected>Select Type</option>
+                        <option value="H">Health</option>
+                        <option value="N">N-min</option>
+                      </select>
+                    </div>
+                    <div class="control">
+                      <button class="button is-primary">Export</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
           </tfoot>
         </table>
       </div>
@@ -92,7 +106,10 @@ export default {
     return {
       state: SamplesStore.state,
       pressureChartData: SamplesStore.state.pressureChartData.datasets[0].data,
-      exportFileName: null
+      exportTray: "",
+      exportType: "",
+      exportDate: "",
+      numberOfSamples: null
     };
   },
   watch: {
@@ -109,7 +126,10 @@ export default {
       SamplesStore.skipSample();
     },
     clickExport: function() {
-      SamplesStore.writeFile(this.exportFileName);
+      SamplesStore.writeFile(this.exportDate, this.exportTray, this.exportType);
+      this.exportTray = "";
+      this.exportType = "";
+      this.exportDate = "";
     },
     clickStart: function() {
       SamplesStore.startPoller();
